@@ -1,0 +1,51 @@
+<h2 mat-dialog-title>Post a Ride</h2>
+<mat-dialog-content>
+  <form [formGroup]='rideForm' (ngSubmit)="onSubmit(rideForm)">
+    <div class="row">
+      <div class="col-12">
+          <mat-form-field>
+              <input matInput placeholder="Name" formControlName='name'>
+          </mat-form-field>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col">
+          <mat-form-field>
+              <input matInput placeholder="Start City" formControlName='startCity'>
+          </mat-form-field>
+      </div>
+      <div class="col">
+          <mat-form-field>
+            <input matInput placeholder="Start State" formControlName='startState'>
+          </mat-form-field>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col">
+          <mat-form-field>
+              <input matInput placeholder="End City" formControlName='endCity'>
+          </mat-form-field>
+      </div>
+      <div class="col">
+          <mat-form-field>
+              <input matInput placeholder="End State" formControlName='endState'>
+          </mat-form-field>
+      </div>
+    </div>
+    <div class="row">
+        <div class="col-12">
+          <mat-form-field>
+              <input matInput [matDatepicker]="picker" placeholder="Choose a date" formControlName="date"> 
+              <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+              <mat-datepicker #picker></mat-datepicker>
+          </mat-form-field>
+      </div>
+    </div>
+  </form>
+
+</mat-dialog-content>
+<mat-dialog-actions>
+  <button type="button" mat-button mat-dialog-close>Cancel</button>
+  <!-- The mat-dialog-close directive optionally accepts a value as a result for the dialog. -->
+  <button type="submit" mat-button [disabled]="rideForm.invalid" [mat-dialog-close]="rideForm">Submit</button>
+</mat-dialog-actions>
