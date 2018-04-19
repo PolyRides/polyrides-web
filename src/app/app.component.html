@@ -1,32 +1,3 @@
-<div class="container">
-    <mat-toolbar>
-      <span>Rides</span>
-      <span class="example-spacer"></span>
-      <button mat-raised-button (click)="openRideDialog()">Add Ride</button>
-    </mat-toolbar>
-    <mat-table [dataSource]='ridesData'>
-        <ng-container matColumnDef="id">
-            <mat-header-cell *matHeaderCellDef> Id </mat-header-cell>
-            <mat-cell *matCellDef="let ride"> {{ride.id}} </mat-cell>
-        </ng-container>
-        <ng-container matColumnDef="userName">
-            <mat-header-cell *matHeaderCellDef> Name </mat-header-cell>
-            <mat-cell *matCellDef="let ride"> {{ride.name}} </mat-cell>
-        </ng-container>
-        <ng-container matColumnDef="start">
-            <mat-header-cell *matHeaderCellDef> Start </mat-header-cell>
-            <mat-cell *matCellDef="let ride"> {{ride.startCity}}, {{ride.startState}} </mat-cell>
-        </ng-container>
-        <ng-container matColumnDef="end">
-            <mat-header-cell *matHeaderCellDef> End </mat-header-cell>
-            <mat-cell *matCellDef="let ride"> {{ride.endCity}}, {{ride.endState}} </mat-cell>
-        </ng-container>
-        <ng-container matColumnDef="date">
-            <mat-header-cell *matHeaderCellDef> Date </mat-header-cell>
-            <mat-cell *matCellDef="let ride"> {{ride.dateOffered}} </mat-cell>
-        </ng-container>
-        <mat-header-row *matHeaderRowDef="columnsToDisplay"></mat-header-row>
-        <mat-row *matRowDef="let myRowData; columns: columnsToDisplay"></mat-row>
-    </mat-table>
-</div>
-
+<app-header></app-header>
+<router-outlet></router-outlet>
+<app-footer></app-footer>
