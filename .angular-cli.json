@@ -10,7 +10,7 @@
       "assets": [
         "assets",
         "favicon.ico",
-        "netlify.toml"
+        "_redirects"
       ],
       "index": "index.html",
       "main": "main.ts",
