@@ -6,7 +6,15 @@ import {HttpClientModule} from '@angular/common/http';
 
 import {AppRoutingModule} from "./app.routing";
 
+// Google Maps Angular Component Library
 import {AgmCoreModule} from '@agm/core';
+
+// AngularFire imports
+import {AngularFireModule} from "angularfire2";
+import {AngularFireAuthModule} from 'angularfire2/auth';
+import {AngularFireDatabaseModule} from "angularfire2/database";
+import {environment} from "../environments/environment";
+
 import {MatTableModule} from '@angular/material/table';
 import {MatToolbarModule} from '@angular/material/toolbar';
 import {MatButtonModule} from '@angular/material/button';
@@ -46,6 +54,7 @@ import { HomeComponent } from './home/home.component';
       apiKey: 'AIzaSyBqsd_UNkaH1kRPlXwmfbOKmvJPJETjMBA',
       libraries: ["places"]
     }),
+    AngularFireModule.initializeApp(environment.firebase), AngularFireAuthModule, AngularFireDatabaseModule,
     MatTableModule, MatToolbarModule, MatButtonModule, MatDialogModule, MatInputModule, MatNativeDateModule,
     MatDatepickerModule
   ],
