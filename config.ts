@@ -32,7 +32,6 @@ const options = {
 
 try {
   let changedFiles = replace.sync(options);
-  console.log(gmapsKey);
   console.log("File updated with key!");
 }
 catch (error) {
