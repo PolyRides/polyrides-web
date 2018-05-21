@@ -1,6 +1,7 @@
 const dotenv = require('dotenv');
 const replace = require('replace-in-file');
 
+// Read OS environment variable
 const result = dotenv.config();
 
 if (result.error) {
