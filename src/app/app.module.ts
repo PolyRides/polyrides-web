@@ -51,7 +51,7 @@ import { HomeComponent } from './home/home.component';
     HttpClientModule,
     AppRoutingModule,
     AgmCoreModule.forRoot({
-      apiKey: 'AIzaSyBqsd_UNkaH1kRPlXwmfbOKmvJPJETjMBA',
+      apiKey: environment.gmapsKey,
       libraries: ["places"]
     }),
     AngularFireModule.initializeApp(environment.firebase), AngularFireAuthModule, AngularFireDatabaseModule,

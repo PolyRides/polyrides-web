@@ -12,5 +12,6 @@ export const environment = {
     projectId: "polyrides-1524115747538",
     storageBucket: "",
     messagingSenderId: "293174586025"
-  }
+  },
+  gmapsKey: 'AIzaSyBqsd_UNkaH1kRPlXwmfbOKmvJPJETjMBA'
 };
