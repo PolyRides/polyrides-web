@@ -17,6 +17,7 @@ import {environment} from "../environments/environment";
 
 import {MatTableModule} from '@angular/material/table';
 import {MatToolbarModule} from '@angular/material/toolbar';
+import {MatIconModule} from '@angular/material/icon';
 import {MatButtonModule} from '@angular/material/button';
 import {MatDialogModule} from '@angular/material/dialog';
 import {MatInputModule} from '@angular/material/input';
@@ -55,7 +56,7 @@ import { HomeComponent } from './home/home.component';
       libraries: ["places"]
     }),
     AngularFireModule.initializeApp(environment.firebase), AngularFireAuthModule, AngularFireDatabaseModule,
-    MatTableModule, MatToolbarModule, MatButtonModule, MatDialogModule, MatInputModule, MatNativeDateModule,
+    MatTableModule, MatToolbarModule, MatIconModule, MatButtonModule, MatDialogModule, MatInputModule, MatNativeDateModule,
     MatDatepickerModule
   ],
   providers: [
