@@ -31,6 +31,11 @@ import { HeaderComponent } from './header/header.component';
 import { FooterComponent } from './footer/footer.component';
 import { RideViewComponent } from './ride-view/ride-view.component';
 import { HomeComponent } from './home/home.component';
+import { MainComponent } from './main/main.component';
+import { LoginComponent } from './login/login.component';
+import { LogoutComponent } from './logout/logout.component';
+import { RequestsComponent } from './requests/requests.component';
+import { ProfileComponent } from './profile/profile.component';
 
 
 @NgModule({
@@ -40,7 +45,12 @@ import { HomeComponent } from './home/home.component';
     HeaderComponent,
     FooterComponent,
     RideViewComponent,
-    HomeComponent
+    HomeComponent,
+    MainComponent,
+    LoginComponent,
+    LogoutComponent,
+    RequestsComponent,
+    ProfileComponent
   ],
   entryComponents: [
     RideDialogComponent
