@@ -17,6 +17,7 @@ import {environment} from "../environments/environment";
 
 import {MatTableModule} from '@angular/material/table';
 import {MatToolbarModule} from '@angular/material/toolbar';
+import {MatIconModule} from '@angular/material/icon';
 import {MatButtonModule} from '@angular/material/button';
 import {MatDialogModule} from '@angular/material/dialog';
 import {MatInputModule} from '@angular/material/input';
@@ -30,6 +31,11 @@ import { HeaderComponent } from './header/header.component';
 import { FooterComponent } from './footer/footer.component';
 import { RideViewComponent } from './ride-view/ride-view.component';
 import { HomeComponent } from './home/home.component';
+import { MainComponent } from './main/main.component';
+import { LoginComponent } from './login/login.component';
+import { LogoutComponent } from './logout/logout.component';
+import { RequestsComponent } from './requests/requests.component';
+import { ProfileComponent } from './profile/profile.component';
 
 
 @NgModule({
@@ -39,7 +45,12 @@ import { HomeComponent } from './home/home.component';
     HeaderComponent,
     FooterComponent,
     RideViewComponent,
-    HomeComponent
+    HomeComponent,
+    MainComponent,
+    LoginComponent,
+    LogoutComponent,
+    RequestsComponent,
+    ProfileComponent
   ],
   entryComponents: [
     RideDialogComponent
@@ -55,7 +66,7 @@ import { HomeComponent } from './home/home.component';
       libraries: ["places"]
     }),
     AngularFireModule.initializeApp(environment.firebase), AngularFireAuthModule, AngularFireDatabaseModule,
-    MatTableModule, MatToolbarModule, MatButtonModule, MatDialogModule, MatInputModule, MatNativeDateModule,
+    MatTableModule, MatToolbarModule, MatIconModule, MatButtonModule, MatDialogModule, MatInputModule, MatNativeDateModule,
     MatDatepickerModule
   ],
   providers: [
