@@ -1,25 +1,35 @@
-import { Component, OnInit } from '@angular/core';
+import {Component, OnDestroy, OnInit} from '@angular/core';
 import {Ride} from "../ride/ride";
 import {rides} from "../ride/data";
-import {TestAppService} from "../test-app.service";
-import {MatDialog} from "@angular/material";
+import {MatDialog, MatSnackBar} from "@angular/material";
 import {RideDialogComponent} from "../ride-dialog/ride-dialog.component";
+import {SessionService} from "../session.service";
+import {Subscription} from "rxjs/internal/Subscription";
+import {AngularFireDatabase} from "angularfire2/database";
 
 @Component({
   selector: 'app-ride-view',
   templateUrl: './ride-view.component.html',
   styleUrls: ['./ride-view.component.css']
 })
-export class RideViewComponent implements OnInit {
+export class RideViewComponent implements OnInit, OnDestroy {
 
   ridesData: Ride[] = [];
   idState = 3;
   columnsToDisplay = ['id', 'userName', 'start', 'end', 'date'];
+  basicUserSubscription: Subscription;
+  sessionUserId: string;
 
-  constructor(private testAppService: TestAppService, private dialog: MatDialog) {}
+  constructor(private sessionService: SessionService, private dialog: MatDialog, private snackBar: MatSnackBar,
+              private db: AngularFireDatabase) {}
 
   ngOnInit() {
     this.ridesData = rides;
+    this.basicUserSubscription = this.sessionService.basicUserInfo.subscribe(
+      (data) => {
+        this.sessionUserId = data.uId;
+      }
+    );
   }
 
   openRideDialog() {
@@ -34,17 +44,30 @@ export class RideViewComponent implements OnInit {
         return;
       }
       const receivedRideForm = result.value;
-      const newRide: Ride = {
-        id: this.idState,
-        name: receivedRideForm.name,
-        startCity: receivedRideForm.startCity,
-        startState: receivedRideForm.startState,
-        endCity: receivedRideForm.endCity,
-        endState: receivedRideForm.endState,
-        dateOffered: receivedRideForm.date
+      const newRide = {
+        origin: receivedRideForm.origin,
+        originLat: receivedRideForm.originLat,
+        originLon: receivedRideForm.originLon,
+        destination: receivedRideForm.destination,
+        destinationLat: receivedRideForm.destinationLat,
+        destinationLon: receivedRideForm.destinationLon,
+        departureDate: receivedRideForm.date,
+        cost: receivedRideForm.cost,
+        seats: receivedRideForm.seats,
+        rideDescription: receivedRideForm.rideDescription,
+        driverId: this.sessionUserId
       };
-      this.ridesData = [...this.ridesData, newRide];
-      this.idState++;
+      this.db.list("/rideOffer").push(newRide).then(() => {
+          console.log("ride posted");
+          this.snackBar.open("Ride Posted!", "Success", {
+            duration: 2000
+          });
+        }
+      );
     });
+  }
+
+  ngOnDestroy() {
+    this.basicUserSubscription.unsubscribe();
   }
 }

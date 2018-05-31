@@ -15,18 +15,24 @@ export class RideDialogComponent implements OnInit, AfterViewInit {
 
   rideForm: FormGroup;
 
-  @ViewChild('origin') originRef: ElementRef;
-  @ViewChild('destination') destinationRef: ElementRef;
+  @ViewChild('originGoogle') originRef: ElementRef;
+  @ViewChild('destinationGoogle') destinationRef: ElementRef;
 
   constructor(private dialogRef: MatDialogRef<RideDialogComponent>, private fb: FormBuilder, private ngZone: NgZone,
     private mapsAPILoader: MapsAPILoader, @Inject(MAT_DIALOG_DATA) private data: any) {
       this.rideForm = this.fb.group({
-        name: ['', Validators.required],
-        startCity: ['', Validators.required],
-        startState: ['', Validators.required],
-        endCity: ['', Validators.required],
-        endState: ['', Validators.required],
-        date: ['', Validators.required]
+        originGoogle: ['', Validators.required],
+        origin: ['', Validators.required],
+        originLat: ['', Validators.required],
+        originLon: ['', Validators.required],
+        destinationGoogle: ['', Validators.required],
+        destination: ['', Validators.required],
+        destinationLat: ['', Validators.required],
+        destinationLon: ['', Validators.required],
+        date: ['', Validators.required],
+        cost: ['', Validators.required],
+        seats: ['', Validators.required],
+        rideDescription: [' ']
       });
     }
 
@@ -60,12 +66,12 @@ export class RideDialogComponent implements OnInit, AfterViewInit {
           console.log(place.geometry.location.lng());
 
           // TO DO formatted_address is not given a guranteed format by Google Place API
-          this.rideForm.get('startCity').patchValue(place.formatted_address);
+          this.rideForm.get('originGoogle').patchValue(place.formatted_address);
+          this.rideForm.get('origin').patchValue(this.splitAddress(place.formatted_address));
+          this.rideForm.get('originLat').patchValue(place.geometry.location.lat());
+          this.rideForm.get('originLon').patchValue(place.geometry.location.lng());
 
-          //set latitude, longitude and zoom
-          // this.latitude = place.geometry.location.lat();
-          // this.longitude = place.geometry.location.lng();
-          // this.zoom = 12;
+
         });
       });
 
@@ -84,16 +90,20 @@ export class RideDialogComponent implements OnInit, AfterViewInit {
           console.log(place.geometry.location.lng());
 
           // TO DO formatted_address is not given a guranteed format by Google Place API
-          this.rideForm.get('endCity').patchValue(place.formatted_address);
+          this.rideForm.get('destinationGoogle').patchValue(place.formatted_address);
+          this.rideForm.get('destination').patchValue(this.splitAddress(place.formatted_address));
+          this.rideForm.get('destinationLat').patchValue(place.geometry.location.lat());
+          this.rideForm.get('destinationLon').patchValue(place.geometry.location.lng());
 
-          //set latitude, longitude and zoom
-          // this.latitude = place.geometry.location.lat();
-          // this.longitude = place.geometry.location.lng();
-          // this.zoom = 12;
         });
       });
 
     });
+  }
+
+  splitAddress(fullAddress: string): string {
+    let addressParts = fullAddress.split(",");
+    return addressParts[0] + "," + addressParts[1];
   }
 
 
