@@ -1,2 +1,24 @@
 /* You can add global styles to this file, and also import other style files */
 @import "~@angular/material/prebuilt-themes/indigo-pink.css";
+
+html {
+  height: 100%;
+}
+
+body {
+  position: relative;
+  padding-bottom: 60px;
+  min-height: 100%;
+}
+
+.mat-card-header {
+  width: 100% !important;
+}
+
+.mat-card-header-text {
+  width: 100% !important;
+}
+
+mat-card-subtitle {
+  width: 100%;
+}

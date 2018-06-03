@@ -69,9 +69,6 @@ export class LoginComponent implements OnInit, OnDestroy {
                 firstName: firstName,
                 lastName: lastName,
                 emailAddress: email,
-                rating: -1,
-                threadIds: [-1],
-                deviceToken: -1
               });
             }
             this.router.navigate(["/"]);

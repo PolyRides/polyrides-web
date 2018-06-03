@@ -16,13 +16,15 @@ import {AngularFireDatabaseModule} from "angularfire2/database";
 import {environment} from "../environments/environment";
 
 import {MatTableModule} from '@angular/material/table';
+import {MatCardModule} from '@angular/material/card';
+import {MatListModule} from '@angular/material/list';
 import {MatToolbarModule} from '@angular/material/toolbar';
 import {MatSnackBarModule} from '@angular/material/snack-bar';
 import {MatIconModule} from '@angular/material/icon';
 import {MatButtonModule} from '@angular/material/button';
 import {MatDialogModule} from '@angular/material/dialog';
 import {MatInputModule} from '@angular/material/input';
-import {MatNativeDateModule} from '@angular/material';
+import {MatMomentDateModule} from '@angular/material-moment-adapter';
 import {MatDatepickerModule} from '@angular/material/datepicker';
 
 import { AppComponent } from './app.component';
@@ -67,8 +69,8 @@ import { ProfileComponent } from './profile/profile.component';
       libraries: ["places"]
     }),
     AngularFireModule.initializeApp(environment.firebase), AngularFireAuthModule, AngularFireDatabaseModule,
-    MatTableModule, MatToolbarModule, MatIconModule, MatSnackBarModule, MatButtonModule, MatDialogModule,
-    MatInputModule, MatNativeDateModule,
+    MatTableModule, MatCardModule, MatListModule, MatToolbarModule, MatIconModule, MatSnackBarModule, MatButtonModule, MatDialogModule,
+    MatInputModule, MatMomentDateModule,
     MatDatepickerModule
   ],
   providers: [

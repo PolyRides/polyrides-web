@@ -1,8 +1,11 @@
-import {AfterViewInit, Component, ElementRef, Inject, NgZone, OnInit, ViewChild} from '@angular/core';
+import {AfterViewInit, Component, ElementRef, Inject, NgZone, OnDestroy, OnInit, ViewChild} from '@angular/core';
 import {FormBuilder, FormGroup, Validators} from '@angular/forms';
 import {MatDialog, MatDialogRef, MAT_DIALOG_DATA} from '@angular/material';
 import { MapsAPILoader } from '@agm/core';
 import {} from '@types/googlemaps';
+import {Subscription} from "rxjs";
+import * as moment from 'moment';
+import {Moment} from "moment";
 
 
 
@@ -11,15 +14,19 @@ import {} from '@types/googlemaps';
   templateUrl: './ride-dialog.component.html',
   styleUrls: ['./ride-dialog.component.css']
 })
-export class RideDialogComponent implements OnInit, AfterViewInit {
+export class RideDialogComponent implements OnInit, AfterViewInit, OnDestroy {
 
   rideForm: FormGroup;
 
-  @ViewChild('originGoogle') originRef: ElementRef;
-  @ViewChild('destinationGoogle') destinationRef: ElementRef;
+  @ViewChild('origin') originRef: ElementRef;
+  @ViewChild('destination') destinationRef: ElementRef;
+  originSubscription: Subscription;
+  destinationSubscription: Subscription;
+  minDate: Moment;
 
   constructor(private dialogRef: MatDialogRef<RideDialogComponent>, private fb: FormBuilder, private ngZone: NgZone,
     private mapsAPILoader: MapsAPILoader, @Inject(MAT_DIALOG_DATA) private data: any) {
+      this.minDate = moment();
       this.rideForm = this.fb.group({
         originGoogle: ['', Validators.required],
         origin: ['', Validators.required],
@@ -32,11 +39,28 @@ export class RideDialogComponent implements OnInit, AfterViewInit {
         date: ['', Validators.required],
         cost: ['', Validators.required],
         seats: ['', Validators.required],
-        rideDescription: [' ']
+        rideDescription: ['']
       });
     }
 
   ngOnInit() {
+    this.originSubscription = this.rideForm.get('origin').valueChanges.subscribe(
+      (value) => {
+        if (this.rideForm.get('originGoogle').value != value) {
+          this.rideForm.get('originLat').reset();
+          this.rideForm.get('originLon').reset();
+        }
+      }
+    );
+
+    this.destinationSubscription = this.rideForm.get('destination').valueChanges.subscribe(
+      (value) => {
+        if (this.rideForm.get('destinationGoogle').value != value) {
+          this.rideForm.get('destinationLat').reset();
+          this.rideForm.get('destinationLon').reset();
+        }
+      }
+    );
 
   }
 
@@ -67,10 +91,9 @@ export class RideDialogComponent implements OnInit, AfterViewInit {
 
           // TO DO formatted_address is not given a guranteed format by Google Place API
           this.rideForm.get('originGoogle').patchValue(place.formatted_address);
-          this.rideForm.get('origin').patchValue(this.splitAddress(place.formatted_address));
           this.rideForm.get('originLat').patchValue(place.geometry.location.lat());
           this.rideForm.get('originLon').patchValue(place.geometry.location.lng());
-
+          this.rideForm.get('origin').patchValue(place.formatted_address);
 
         });
       });
@@ -91,9 +114,9 @@ export class RideDialogComponent implements OnInit, AfterViewInit {
 
           // TO DO formatted_address is not given a guranteed format by Google Place API
           this.rideForm.get('destinationGoogle').patchValue(place.formatted_address);
-          this.rideForm.get('destination').patchValue(this.splitAddress(place.formatted_address));
           this.rideForm.get('destinationLat').patchValue(place.geometry.location.lat());
           this.rideForm.get('destinationLon').patchValue(place.geometry.location.lng());
+          this.rideForm.get('destination').patchValue(place.formatted_address);
 
         });
       });
@@ -101,13 +124,13 @@ export class RideDialogComponent implements OnInit, AfterViewInit {
     });
   }
 
-  splitAddress(fullAddress: string): string {
-    let addressParts = fullAddress.split(",");
-    return addressParts[0] + "," + addressParts[1];
-  }
-
 
   onSubmit() {
+  }
+
+  ngOnDestroy() {
+    this.originSubscription.unsubscribe();
+    this.destinationSubscription.unsubscribe();
   }
 
 }

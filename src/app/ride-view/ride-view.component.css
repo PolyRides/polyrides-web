@@ -1,3 +1,19 @@
 .example-spacer {
   flex: 1 1 auto;
 }
+
+agm-map {
+  height: 500px;
+}
+
+.scrollable-cards {
+  height: 500px;
+  overflow: visible;
+  overflow-y: scroll;
+  list-style-type: none;
+  padding-left: 0;
+}
+
+mat-card-content {
+  margin: 0 8px;
+}

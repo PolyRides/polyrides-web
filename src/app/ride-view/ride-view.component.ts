@@ -6,6 +6,9 @@ import {RideDialogComponent} from "../ride-dialog/ride-dialog.component";
 import {SessionService} from "../session.service";
 import {Subscription} from "rxjs/internal/Subscription";
 import {AngularFireDatabase} from "angularfire2/database";
+import * as moment from 'moment';
+import {map} from "rxjs/operators";
+
 
 @Component({
   selector: 'app-ride-view',
@@ -18,7 +21,12 @@ export class RideViewComponent implements OnInit, OnDestroy {
   idState = 3;
   columnsToDisplay = ['id', 'userName', 'start', 'end', 'date'];
   basicUserSubscription: Subscription;
+  rideOfferSubscription: Subscription;
+  profileSubscription: Subscription;
   sessionUserId: string;
+  riderOffersDisplayed: any[] = [];
+  lat: number = 51.678418;
+  lng: number = 7.809007;
 
   constructor(private sessionService: SessionService, private dialog: MatDialog, private snackBar: MatSnackBar,
               private db: AngularFireDatabase) {}
@@ -28,6 +36,54 @@ export class RideViewComponent implements OnInit, OnDestroy {
     this.basicUserSubscription = this.sessionService.basicUserInfo.subscribe(
       (data) => {
         this.sessionUserId = data.uId;
+      }
+    );
+
+    let rideOffers = this.db.list('/rideOffer', ref => ref.orderByChild('departureDate'));
+    this.rideOfferSubscription = rideOffers.snapshotChanges().pipe(
+      map(rideOfferChange =>
+        rideOfferChange.map(r => ({uId: r.payload.key, ...r.payload.val()}))
+      )
+    ).subscribe(
+      (data) => {
+        data.forEach(
+          (offer) => {
+            if (offer.hasOwnProperty('driverId')) {
+              this.processRideOffer(offer);
+            }
+          }
+        );
+        console.log(this.riderOffersDisplayed);
+      }
+    );
+  }
+
+  processRideOffer(offer: any) {
+    let profiles = this.db.list('/profile', ref => ref.orderByKey().equalTo(offer.driverId));
+    this.profileSubscription = profiles.snapshotChanges().pipe(
+      map(profileChange =>
+        profileChange.map(p => ({ uId: p.payload.key, ...p.payload.val() }))
+      )
+    ).subscribe(
+      (data) => {
+        if (data && data.length !== 0) {
+          let userProfile: any = data[0];
+          let displayedDate = moment.unix(offer.departureDate).format('ddd MMM Do YYYY');
+          this.riderOffersDisplayed.push({
+            uId: offer.uId,
+            driverName: userProfile.firstName + " " + userProfile.lastName,
+            departureDate: displayedDate,
+            origin: offer.origin,
+            originLat: offer.originLat,
+            originLon: offer.originLon,
+            destination: offer.destination,
+            destinationLat: offer.destinationLat,
+            destinationLon: offer.destinationLon,
+            cost: offer.cost,
+            seats: offer.seats
+          });
+          this.profileSubscription.unsubscribe();
+        }
       }
     );
   }
@@ -44,6 +100,7 @@ export class RideViewComponent implements OnInit, OnDestroy {
         return;
       }
       const receivedRideForm = result.value;
+      let epochSecs = moment(receivedRideForm.date).unix();
       const newRide = {
         origin: receivedRideForm.origin,
         originLat: receivedRideForm.originLat,
@@ -51,7 +108,7 @@ export class RideViewComponent implements OnInit, OnDestroy {
         destination: receivedRideForm.destination,
         destinationLat: receivedRideForm.destinationLat,
         destinationLon: receivedRideForm.destinationLon,
-        departureDate: receivedRideForm.date,
+        departureDate: epochSecs,
         cost: receivedRideForm.cost,
         seats: receivedRideForm.seats,
         rideDescription: receivedRideForm.rideDescription,
@@ -69,5 +126,9 @@ export class RideViewComponent implements OnInit, OnDestroy {
 
   ngOnDestroy() {
     this.basicUserSubscription.unsubscribe();
+    this.rideOfferSubscription.unsubscribe();
+    if (this.profileSubscription) {
+      this.profileSubscription.unsubscribe();
+    }
   }
 }
