@@ -7,8 +7,11 @@ import {SessionService} from "../session.service";
 import {Subscription} from "rxjs/internal/Subscription";
 import {AngularFireDatabase} from "angularfire2/database";
 import * as moment from 'moment';
-import {map} from "rxjs/operators";
+import {map, take} from "rxjs/operators";
+import LatLngBounds = google.maps.LatLngBounds;
 
+const centerLat: number = 37.0902;
+const centerLon: number = -95.7129;
 
 @Component({
   selector: 'app-ride-view',
@@ -25,8 +28,11 @@ export class RideViewComponent implements OnInit, OnDestroy {
   profileSubscription: Subscription;
   sessionUserId: string;
   riderOffersDisplayed: any[] = [];
-  lat: number = 51.678418;
-  lng: number = 7.809007;
+  originLat: number = centerLat;
+  originLon: number = centerLon;
+  destLat: number = centerLat;
+  destLon: number = centerLon;
+  mapBounds: any;
 
   constructor(private sessionService: SessionService, private dialog: MatDialog, private snackBar: MatSnackBar,
               private db: AngularFireDatabase) {}
@@ -46,46 +52,80 @@ export class RideViewComponent implements OnInit, OnDestroy {
       )
     ).subscribe(
       (data) => {
+        let promiseArray = [];
+        console.log("here is data" + JSON.stringify(data));
         data.forEach(
           (offer) => {
             if (offer.hasOwnProperty('driverId')) {
-              this.processRideOffer(offer);
+              promiseArray.push(this.processRideOffer(offer));
             }
           }
         );
-        console.log(this.riderOffersDisplayed);
+        console.log("done with foreach");
+        Promise.all(promiseArray).then(
+          (values) => {
+            console.log("done with all promises");
+            console.log(values);
+            this.riderOffersDisplayed = [...values];
+            console.log("displayed ...");
+            console.log(this.riderOffersDisplayed);
+            this.snackBar.open("Rides Loaded!", "Success", {
+              duration: 2000
+            });
+          });
       }
     );
   }
 
   processRideOffer(offer: any) {
-    let profiles = this.db.list('/profile', ref => ref.orderByKey().equalTo(offer.driverId));
-    this.profileSubscription = profiles.snapshotChanges().pipe(
-      map(profileChange =>
-        profileChange.map(p => ({ uId: p.payload.key, ...p.payload.val() }))
-      )
-    ).subscribe(
-      (data) => {
-        if (data && data.length !== 0) {
-          let userProfile: any = data[0];
-          let displayedDate = moment.unix(offer.departureDate).format('ddd MMM Do YYYY');
-          this.riderOffersDisplayed.push({
-            uId: offer.uId,
-            driverName: userProfile.firstName + " " + userProfile.lastName,
-            departureDate: displayedDate,
-            origin: offer.origin,
-            originLat: offer.originLat,
-            originLon: offer.originLon,
-            destination: offer.destination,
-            destinationLat: offer.destinationLat,
-            destinationLon: offer.destinationLon,
-            cost: offer.cost,
-            seats: offer.seats
-          });
-          this.profileSubscription.unsubscribe();
+    let promise = new Promise((resolve, reject) => {
+      let profiles = this.db.list('/profile', ref => ref.orderByKey().equalTo(offer.driverId));
+      profiles.snapshotChanges().pipe(
+        map(profileChange =>
+          profileChange.map(p => ({ uId: p.payload.key, ...p.payload.val() }))
+        )
+      ).pipe(take(1)).toPromise().then(
+        (data) => {
+          if (data && data.length !== 0) {
+            let userProfile: any = data[0];
+            let displayedDate = moment(offer.departureDate).format('ddd MMM Do YYYY');
+            resolve({
+              uId: offer.uId,
+              driverName: userProfile.firstName + " " + userProfile.lastName,
+              departureDate: displayedDate,
+              origin: offer.origin,
+              originLat: offer.originLat,
+              originLon: offer.originLon,
+              destination: offer.destination,
+              destinationLat: offer.destinationLat,
+              destinationLon: offer.destinationLon,
+              cost: offer.cost,
+              seats: offer.seats
+            });
+          }
         }
-      }
-    );
+      ).catch((err) => {
+        console.log(err);
+        reject();
+      })
+    });
+    return promise;
+  }
+
+  updateMapView(obj) {
+    this.originLat = obj ? obj.originLat : this.originLat;
+    this.originLon = obj ? obj.originLon : this.originLon;
+    this.destLat = obj ? obj.destinationLat : this.destLat;
+    this.destLon = obj ? obj.destinationLon : this.destLon;
+    let bounds:LatLngBounds = new google.maps.LatLngBounds();
+
+    bounds.extend(new google.maps.LatLng(this.originLat, this.originLon));
+    bounds.extend(new google.maps.LatLng(this.destLat, this.destLon));
+    this.mapBounds = bounds;
+  }
+
+  trackRideOffersDisplayed(index, obj) {
+    return obj ? obj.uId : undefined;
   }
 
   openRideDialog() {
@@ -100,7 +140,7 @@ export class RideViewComponent implements OnInit, OnDestroy {
         return;
       }
       const receivedRideForm = result.value;
-      let epochSecs = moment(receivedRideForm.date).unix();
+      let epochMiliSecs = moment(receivedRideForm.date).valueOf();
       const newRide = {
         origin: receivedRideForm.origin,
         originLat: receivedRideForm.originLat,
@@ -108,7 +148,7 @@ export class RideViewComponent implements OnInit, OnDestroy {
         destination: receivedRideForm.destination,
         destinationLat: receivedRideForm.destinationLat,
         destinationLon: receivedRideForm.destinationLon,
-        departureDate: epochSecs,
+        departureDate: epochMiliSecs,
         cost: receivedRideForm.cost,
         seats: receivedRideForm.seats,
         rideDescription: receivedRideForm.rideDescription,
