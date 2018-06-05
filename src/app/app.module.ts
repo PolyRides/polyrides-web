@@ -16,7 +16,6 @@ import {environment} from "../environments/environment";
 
 import {MatTableModule} from '@angular/material/table';
 import {MatCardModule} from '@angular/material/card';
-import {MatListModule} from '@angular/material/list';
 import {MatToolbarModule} from '@angular/material/toolbar';
 import {MatSnackBarModule} from '@angular/material/snack-bar';
 import {MatIconModule} from '@angular/material/icon';
@@ -83,7 +82,7 @@ export const MY_MOMENT_FORMATS = {
       libraries: ["places"]
     }),
     AngularFireModule.initializeApp(environment.firebase), AngularFireAuthModule, AngularFireDatabaseModule,
-    MatTableModule, MatCardModule, MatListModule, MatToolbarModule, MatIconModule, MatSnackBarModule, MatButtonModule, MatDialogModule,
+    MatTableModule, MatCardModule, MatToolbarModule, MatIconModule, MatSnackBarModule, MatButtonModule, MatDialogModule,
     MatInputModule, MatMomentDateModule,
     MatDatepickerModule, OwlDateTimeModule, OwlMomentDateTimeModule
   ],
