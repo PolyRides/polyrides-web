@@ -15,15 +15,16 @@
         </mat-form-field>
       </div>
     </div>
+    <br>
     <div class="row">
       <div class="col-12">
-        <mat-form-field>
-          <input matInput [matDatepicker]="picker" [min]="minDate" placeholder="Choose a date" formControlName="date">
-          <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
-          <mat-datepicker #picker></mat-datepicker>
-        </mat-form-field>
+        <label>Date Time:</label>
+        <input formControlName="dateTime" [min]="minDateTime"
+               [owlDateTimeTrigger]="dtPicker2" [owlDateTime]="dtPicker2">
+        <owl-date-time #dtPicker2></owl-date-time>
       </div>
     </div>
+    <br>
     <div class="row">
       <div class="col-6">
         <mat-form-field>

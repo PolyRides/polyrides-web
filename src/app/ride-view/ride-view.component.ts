@@ -9,6 +9,7 @@ import {AngularFireDatabase} from "angularfire2/database";
 import * as moment from 'moment';
 import {map, take} from "rxjs/operators";
 import LatLngBounds = google.maps.LatLngBounds;
+import {NoteProfileDialogComponent} from "../note-profile-dialog/note-profile-dialog.component";
 
 const centerLat: number = 37.0902;
 const centerLon: number = -95.7129;
@@ -53,7 +54,6 @@ export class RideViewComponent implements OnInit, OnDestroy {
     ).subscribe(
       (data) => {
         let promiseArray = [];
-        console.log("here is data" + JSON.stringify(data));
         data.forEach(
           (offer) => {
             if (offer.hasOwnProperty('driverId')) {
@@ -89,10 +89,13 @@ export class RideViewComponent implements OnInit, OnDestroy {
           if (data && data.length !== 0) {
             let userProfile: any = data[0];
             let displayedDate = moment(offer.departureDate).format('ddd MMM Do YYYY');
+            let displayedTime = moment(offer.departureDate).format('h:mm a');
             resolve({
               uId: offer.uId,
+              profileId: userProfile.uId,
               driverName: userProfile.firstName + " " + userProfile.lastName,
               departureDate: displayedDate,
+              displayedTime: displayedTime,
               origin: offer.origin,
               originLat: offer.originLat,
               originLon: offer.originLon,
@@ -100,7 +103,8 @@ export class RideViewComponent implements OnInit, OnDestroy {
               destinationLat: offer.destinationLat,
               destinationLon: offer.destinationLon,
               cost: offer.cost,
-              seats: offer.seats
+              seats: offer.seats,
+              rideDescription: offer.rideDescription
             });
           }
         }
@@ -128,6 +132,82 @@ export class RideViewComponent implements OnInit, OnDestroy {
     return obj ? obj.uId : undefined;
   }
 
+  openProfileDialog(obj) {
+    const dialogRef = this.dialog.open(NoteProfileDialogComponent, {
+      disableClose: true,
+      hasBackdrop: true,
+      data: {
+        rideDescription: obj.rideDescription,
+        name: obj.driverName,
+        profileId: obj.profileId
+      }
+    });
+  }
+
+  requestRide(obj) {
+    if (!obj.seats || (obj.seats && obj.seats <= 0) || (obj.profileId === this.sessionUserId)) {
+      this.snackBar.open("Cannot request this ride!", "Error", {
+        duration: 2000
+      });
+      return;
+    }
+    let rideOffers = this.db.list('/rideOffer', ref => ref.orderByKey().equalTo(obj.uId));
+    let requestRideOfferSubscription = rideOffers.snapshotChanges().pipe(
+      map(rideOffer =>
+        rideOffer.map(p => ({ uId: p.payload.key, ...p.payload.val() }))
+      )
+    ).subscribe(
+      (data) => {
+        console.log(data);
+        if (data && data.length !== 0) {
+          let offer: any = data[0];
+          let occupiedSeats = obj.seats - 1;
+          if (offer.hasOwnProperty('riderIds')) {
+            let exisitingRiderIds = offer.riderIds;
+            let found = false;
+            for (let id of exisitingRiderIds) {
+              if (id === this.sessionUserId) {
+                found = true;
+              }
+            }
+            console.log("found is " + found);
+            if (found) {
+              this.snackBar.open("You are part of this ride!", "Error", {
+                duration: 2000
+              });
+            }
+            else {
+              rideOffers.update(obj.uId, {
+                riderIds: [this.sessionUserId, ...exisitingRiderIds],
+                seats: occupiedSeats
+              }).then(
+                () => {
+                  this.snackBar.open("Ride Requested!", "Success", {
+                    duration: 2000
+                  });
+                }
+              );
+            }
+          }
+          else {
+            rideOffers.update(obj.uId, {
+              riderIds: [this.sessionUserId],
+              seats: occupiedSeats
+            }).then(
+              () => {
+                this.snackBar.open("Ride Requested!", "Success", {
+                  duration: 2000
+                });
+              }
+            );
+          }
+          requestRideOfferSubscription.unsubscribe();
+        }
+      }
+    );
+
+  }
+
   openRideDialog() {
     const dialogRef = this.dialog.open(RideDialogComponent, {
       disableClose: true,
@@ -140,7 +220,7 @@ export class RideViewComponent implements OnInit, OnDestroy {
         return;
       }
       const receivedRideForm = result.value;
-      let epochMiliSecs = moment(receivedRideForm.date).valueOf();
+      let epochMiliSecs = moment(receivedRideForm.dateTime).valueOf();
       const newRide = {
         origin: receivedRideForm.origin,
         originLat: receivedRideForm.originLat,

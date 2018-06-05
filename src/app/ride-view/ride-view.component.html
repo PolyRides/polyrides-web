@@ -30,48 +30,6 @@
 <div class="row h-100">
   <div class="col-6">
     <ul class="scrollable-cards">
-      <!--<li>-->
-          <!--<mat-card class="example-card" tabindex="0">-->
-            <!--<mat-card-header>-->
-              <!--<mat-card-title>Charnpreet Singh</mat-card-title>-->
-              <!--<mat-card-subtitle>-->
-                <!--<div class="row">-->
-                  <!--<div class="col-4">-->
-                    <!--San Francisco, CA, USA-->
-                  <!--</div>-->
-                  <!--<div class="col-2">-->
-                    <!--to-->
-                  <!--</div>-->
-                  <!--<div class="col-4">-->
-                    <!--Sacramento, CA, USA-->
-                  <!--</div>-->
-                <!--</div>-->
-              <!--</mat-card-subtitle>-->
-            <!--</mat-card-header>-->
-            <!--<mat-card-content>-->
-              <!--<div class="row">-->
-                <!--<div class="col-6">-->
-                  <!--Friday, Jun 8th, 2018-->
-                <!--</div>-->
-                <!--<div class="col-6">-->
-                  <!--1:00pm-->
-                <!--</div>-->
-              <!--</div>-->
-              <!--<div class="row">-->
-                <!--<div class="col-6">-->
-                  <!--Seats: 4-->
-                <!--</div>-->
-                <!--<div class="col-6">-->
-                  <!--$20-->
-                <!--</div>-->
-              <!--</div>-->
-            <!--</mat-card-content>-->
-            <!--<mat-card-actions>-->
-              <!--<button mat-button>LIKE</button>-->
-              <!--<button mat-button>SHARE</button>-->
-            <!--</mat-card-actions>-->
-          <!--</mat-card>-->
-      <!--</li>-->
       <li *ngFor="let rideOffer of riderOffersDisplayed; let i = index; trackBy: trackRideOffersDisplayed">
         <mat-card class="example-card" tabindex="0">
           <mat-card-header>
@@ -96,7 +54,7 @@
                 {{rideOffer.departureDate}}
               </div>
               <div class="col-6">
-                1:00pm
+                {{rideOffer.displayedTime}}
               </div>
             </div>
             <div class="row">
@@ -110,7 +68,8 @@
           </mat-card-content>
           <mat-card-actions>
             <button mat-button (click)="updateMapView(rideOffer)">VIEW ON MAP</button>
-            <button mat-button>SHARE</button>
+            <button mat-button (click)="openProfileDialog(rideOffer)">VIEW NOTE/PROFILE</button>
+            <button mat-button (click)="requestRide(rideOffer)">REQUEST</button>
           </mat-card-actions>
         </mat-card>
       </li>

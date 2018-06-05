@@ -35,6 +35,8 @@
     "jquery": "^3.3.1",
     "material-design-icons": "^3.0.1",
     "moment": "^2.22.2",
+    "ng-pick-datetime": "^6.0.4",
+    "ng-pick-datetime-moment": "^1.0.6",
     "normalize.css": "^8.0.0",
     "popper.js": "^1.14.3",
     "rxjs": "^6.2.0",

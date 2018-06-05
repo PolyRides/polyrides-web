@@ -22,11 +22,11 @@ export class RideDialogComponent implements OnInit, AfterViewInit, OnDestroy {
   @ViewChild('destination') destinationRef: ElementRef;
   originSubscription: Subscription;
   destinationSubscription: Subscription;
-  minDate: Moment;
+  minDateTime: Moment;
 
   constructor(private dialogRef: MatDialogRef<RideDialogComponent>, private fb: FormBuilder, private ngZone: NgZone,
     private mapsAPILoader: MapsAPILoader, @Inject(MAT_DIALOG_DATA) private data: any) {
-      this.minDate = moment();
+      this.minDateTime = moment().add(15, 'm');
       this.rideForm = this.fb.group({
         originGoogle: ['', Validators.required],
         origin: ['', Validators.required],
@@ -36,7 +36,7 @@ export class RideDialogComponent implements OnInit, AfterViewInit, OnDestroy {
         destination: ['', Validators.required],
         destinationLat: ['', Validators.required],
         destinationLon: ['', Validators.required],
-        date: ['', Validators.required],
+        dateTime: ['', Validators.required],
         cost: ['', Validators.required],
         seats: ['', Validators.required],
         rideDescription: ['']

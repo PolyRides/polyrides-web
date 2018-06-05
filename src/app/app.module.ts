@@ -2,7 +2,6 @@ import { BrowserModule } from '@angular/platform-browser';
 import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
 import {ReactiveFormsModule} from '@angular/forms';
 import { NgModule } from '@angular/core';
-import {HttpClientModule} from '@angular/common/http';
 
 import {AppRoutingModule} from "./app.routing";
 
@@ -27,8 +26,12 @@ import {MatInputModule} from '@angular/material/input';
 import {MatMomentDateModule} from '@angular/material-moment-adapter';
 import {MatDatepickerModule} from '@angular/material/datepicker';
 
+// NgDateTime imports
+import {OWL_DATE_TIME_FORMATS, OwlDateTimeModule} from 'ng-pick-datetime';
+import {OwlMomentDateTimeModule} from 'ng-pick-datetime-moment';
+
+// Component imports
 import { AppComponent } from './app.component';
-import { TestAppService } from './test-app.service';
 import { RideDialogComponent } from './ride-dialog/ride-dialog.component';
 import { HeaderComponent } from './header/header.component';
 import { FooterComponent } from './footer/footer.component';
@@ -39,7 +42,17 @@ import { LoginComponent } from './login/login.component';
 import { LogoutComponent } from './logout/logout.component';
 import { RequestsComponent } from './requests/requests.component';
 import { ProfileComponent } from './profile/profile.component';
+import { NoteProfileDialogComponent } from './note-profile-dialog/note-profile-dialog.component';
 
+export const MY_MOMENT_FORMATS = {
+  parseInput: 'l LT',
+  fullPickerInput: 'l LT',
+  datePickerInput: 'l',
+  timePickerInput: 'LT',
+  monthYearLabel: 'MMM YYYY',
+  dateA11yLabel: 'LL',
+  monthYearA11yLabel: 'MMMM YYYY',
+};
 
 @NgModule({
   declarations: [
@@ -53,16 +66,17 @@ import { ProfileComponent } from './profile/profile.component';
     LoginComponent,
     LogoutComponent,
     RequestsComponent,
-    ProfileComponent
+    ProfileComponent,
+    NoteProfileDialogComponent
   ],
   entryComponents: [
-    RideDialogComponent
+    RideDialogComponent,
+    NoteProfileDialogComponent
   ],
   imports: [
     BrowserModule,
     BrowserAnimationsModule,
     ReactiveFormsModule,
-    HttpClientModule,
     AppRoutingModule,
     AgmCoreModule.forRoot({
       apiKey: environment.gmapsKey,
@@ -71,10 +85,10 @@ import { ProfileComponent } from './profile/profile.component';
     AngularFireModule.initializeApp(environment.firebase), AngularFireAuthModule, AngularFireDatabaseModule,
     MatTableModule, MatCardModule, MatListModule, MatToolbarModule, MatIconModule, MatSnackBarModule, MatButtonModule, MatDialogModule,
     MatInputModule, MatMomentDateModule,
-    MatDatepickerModule
+    MatDatepickerModule, OwlDateTimeModule, OwlMomentDateTimeModule
   ],
   providers: [
-    TestAppService,
+    {provide: OWL_DATE_TIME_FORMATS, useValue: MY_MOMENT_FORMATS},
   ],
   bootstrap: [AppComponent]
 })
