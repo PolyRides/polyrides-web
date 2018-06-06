@@ -9,10 +9,10 @@ import {map} from "rxjs/operators";
 
 @Component({
   selector: 'app-main',
-  templateUrl: './main.component.html',
-  styleUrls: ['./main.component.css']
+  templateUrl: './auth-shell.component.html',
+  styleUrls: ['./auth-shell.component.css']
 })
-export class MainComponent implements OnInit, OnDestroy {
+export class AuthShellComponent implements OnInit, OnDestroy {
 
   authSubscription: Subscription;
   profilesSubscription: Subscription;
@@ -24,7 +24,7 @@ export class MainComponent implements OnInit, OnDestroy {
       (data) => {
         if (data) {
           let email = data.email;
-          let profiles = this.db.list('/profile', ref => ref.orderByChild('emailAddress').equalTo(email));
+          let profiles = this.db.list('/Profile', ref => ref.orderByChild('emailAddress').equalTo(email));
           this.profilesSubscription = profiles.snapshotChanges().pipe(
             map(profileChange =>
               profileChange.map(p => ({ uId: p.payload.key, ...p.payload.val() }))

@@ -14,6 +14,7 @@ import {AngularFireAuthModule} from 'angularfire2/auth';
 import {AngularFireDatabaseModule} from "angularfire2/database";
 import {environment} from "../environments/environment";
 
+// Angular Material imports
 import {MatTableModule} from '@angular/material/table';
 import {MatCardModule} from '@angular/material/card';
 import {MatToolbarModule} from '@angular/material/toolbar';
@@ -24,6 +25,7 @@ import {MatDialogModule} from '@angular/material/dialog';
 import {MatInputModule} from '@angular/material/input';
 import {MatMomentDateModule} from '@angular/material-moment-adapter';
 import {MatDatepickerModule} from '@angular/material/datepicker';
+import {MatTabsModule} from '@angular/material/tabs';
 
 // NgDateTime imports
 import {OWL_DATE_TIME_FORMATS, OwlDateTimeModule} from 'ng-pick-datetime';
@@ -36,12 +38,17 @@ import { HeaderComponent } from './header/header.component';
 import { FooterComponent } from './footer/footer.component';
 import { RideViewComponent } from './ride-view/ride-view.component';
 import { HomeComponent } from './home/home.component';
-import { MainComponent } from './main/main.component';
+import { AuthShellComponent } from './auth-shell/auth-shell.component';
 import { LoginComponent } from './login/login.component';
 import { LogoutComponent } from './logout/logout.component';
 import { RequestsComponent } from './requests/requests.component';
 import { ProfileComponent } from './profile/profile.component';
 import { NoteProfileDialogComponent } from './note-profile-dialog/note-profile-dialog.component';
+import { AllRidesComponent } from './all-rides/all-rides.component';
+import { DetailRidesComponent } from './detail-rides/detail-rides.component';
+import { DetailRequestsComponent } from './detail-requests/detail-requests.component';
+import { SearchShellComponent } from './search-shell/search-shell.component';
+import { MainShellComponent } from './main-shell/main-shell.component';
 
 export const MY_MOMENT_FORMATS = {
   parseInput: 'l LT',
@@ -61,12 +68,17 @@ export const MY_MOMENT_FORMATS = {
     FooterComponent,
     RideViewComponent,
     HomeComponent,
-    MainComponent,
+    AuthShellComponent,
     LoginComponent,
     LogoutComponent,
     RequestsComponent,
     ProfileComponent,
-    NoteProfileDialogComponent
+    NoteProfileDialogComponent,
+    AllRidesComponent,
+    DetailRidesComponent,
+    DetailRequestsComponent,
+    SearchShellComponent,
+    MainShellComponent
   ],
   entryComponents: [
     RideDialogComponent,
@@ -83,7 +95,7 @@ export const MY_MOMENT_FORMATS = {
     }),
     AngularFireModule.initializeApp(environment.firebase), AngularFireAuthModule, AngularFireDatabaseModule,
     MatTableModule, MatCardModule, MatToolbarModule, MatIconModule, MatSnackBarModule, MatButtonModule, MatDialogModule,
-    MatInputModule, MatMomentDateModule,
+    MatInputModule, MatMomentDateModule, MatTabsModule,
     MatDatepickerModule, OwlDateTimeModule, OwlMomentDateTimeModule
   ],
   providers: [

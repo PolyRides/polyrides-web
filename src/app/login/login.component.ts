@@ -55,7 +55,7 @@ export class LoginComponent implements OnInit, OnDestroy {
           lastName += " " + nameSplit[2];
         }
 
-        let profiles = this.db.list('/profile', ref => ref.orderByChild('emailAddress').equalTo(email));
+        let profiles = this.db.list('/Profile', ref => ref.orderByChild('emailAddress').equalTo(email));
         this.profilesSubscription = profiles.snapshotChanges().pipe(
           map(profileChange =>
             profileChange.map(p => ({ uId: p.payload.key, ...p.payload.val() }))
@@ -65,7 +65,9 @@ export class LoginComponent implements OnInit, OnDestroy {
             console.log(data);
             if (data === undefined || data.length === 0) {
               console.log("not found");
-              this.db.list("/profile").push({
+              const pushId = this.db.createPushId();
+              this.db.list("/Profile").set(pushId, {
+                uid: pushId,
                 firstName: firstName,
                 lastName: lastName,
                 emailAddress: email,
@@ -81,8 +83,12 @@ export class LoginComponent implements OnInit, OnDestroy {
 
 
   ngOnDestroy() {
-    this.authSubscription.unsubscribe();
-    this.profilesSubscription.unsubscribe();
+    if (this.authSubscription) {
+      this.authSubscription.unsubscribe();
+    }
+    if (this.profilesSubscription) {
+      this.profilesSubscription.unsubscribe();
+    }
   }
 
 }

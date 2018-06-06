@@ -29,7 +29,7 @@ export class NoteProfileDialogComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
-    let profiles = this.db.list('/profile', ref => ref.orderByKey().equalTo(this.profileId));
+    let profiles = this.db.list('/Profile', ref => ref.orderByKey().equalTo(this.profileId));
     this.profileSubscription = profiles.snapshotChanges().pipe(
       map(profileChange =>
         profileChange.map(p => ({ uId: p.payload.key, ...p.payload.val() }))

@@ -4,11 +4,16 @@ import { Routes, RouterModule } from '@angular/router';
 import {RideViewComponent} from "./ride-view/ride-view.component";
 import {HomeComponent} from "./home/home.component";
 import {AuthGuard} from "./auth.guard";
-import {MainComponent} from "./main/main.component";
+import {AuthShellComponent} from "./auth-shell/auth-shell.component";
 import {LoginComponent} from "./login/login.component";
 import {LogoutComponent} from "./logout/logout.component";
 import {RequestsComponent} from "./requests/requests.component";
 import {ProfileComponent} from "./profile/profile.component";
+import {MainShellComponent} from "./main-shell/main-shell.component";
+import {SearchShellComponent} from "./search-shell/search-shell.component";
+import {DetailRidesComponent} from "./detail-rides/detail-rides.component";
+import {DetailRequestsComponent} from "./detail-requests/detail-requests.component";
+import {AllRidesComponent} from "./all-rides/all-rides.component";
 
 const routes: Routes = [
   {
@@ -28,19 +33,51 @@ const routes: Routes = [
   },
   {
     path: 'web',
-    component: MainComponent,
+    component: AuthShellComponent,
     canActivate: [AuthGuard],
     children: [
       {
         path: '',
         pathMatch: 'full',
-        redirectTo: 'home'
+        redirectTo: 'main'
       },
       {
-        path: 'home',
-        pathMatch: 'full',
-        component: HomeComponent,
-        canActivate: [AuthGuard]
+        path: 'main',
+        component: MainShellComponent,
+        canActivate: [AuthGuard],
+        children: [
+          {
+            path: '',
+            pathMatch: 'full',
+            redirectTo: 'rides'
+          },
+          {
+            path: 'rides',
+            pathMatch: 'full',
+            component: DetailRidesComponent,
+            canActivate: [AuthGuard]
+          },
+          {
+            path: 'requests',
+            pathMatch: 'full',
+            component: DetailRequestsComponent,
+            canActivate: [AuthGuard]
+          },
+          {
+            path: 'all',
+            pathMatch: 'full',
+            component: AllRidesComponent,
+            canActivate: [AuthGuard]
+          }
+        ]
+      },
+      {
+        path: 'search',
+        component: SearchShellComponent,
+        canActivate: [AuthGuard],
+        children: [
+
+        ]
       },
       {
         path: 'rides',

@@ -1,0 +1,43 @@
+@import '~@angular/material/theming';
+@include mat-core();
+
+$polyrides-brand: (
+  50 : #e1ebe8,
+  100 : #b3ccc6,
+  200 : #81aba1,
+  300 : #4f897b,
+  400 : #296f5e,
+  500 : #035642,
+  600 : #034f3c,
+  700 : #024533,
+  800 : #023c2b,
+  900 : #012b1d,
+  A100 : #65ffbf,
+  A200 : #32ffaa,
+  A400 : #00fe95,
+  A700 : #00e586,
+  contrast: (
+    50 : #000000,
+    100 : #000000,
+    200 : #000000,
+    300 : #ffffff,
+    400 : #ffffff,
+    500 : #ffffff,
+    600 : #ffffff,
+    700 : #ffffff,
+    800 : #ffffff,
+    900 : #ffffff,
+    A100 : #000000,
+    A200 : #000000,
+    A400 : #000000,
+    A700 : #000000,
+  )
+);
+
+
+
+$primary: mat-palette($polyrides-brand);
+$accent:  mat-palette($mat-light-blue, 600, 100, 800);
+$warn:    mat-palette($mat-red, 600);
+$theme: mat-light-theme($primary, $accent, $warn);
+@include angular-material-theme($theme);

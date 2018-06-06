@@ -46,7 +46,7 @@ export class RideViewComponent implements OnInit, OnDestroy {
       }
     );
 
-    let rideOffers = this.db.list('/rideOffer', ref => ref.orderByChild('departureDate'));
+    let rideOffers = this.db.list('/RideOffer', ref => ref.orderByChild('departureDate'));
     this.rideOfferSubscription = rideOffers.snapshotChanges().pipe(
       map(rideOfferChange =>
         rideOfferChange.map(r => ({uId: r.payload.key, ...r.payload.val()}))
@@ -79,7 +79,7 @@ export class RideViewComponent implements OnInit, OnDestroy {
 
   processRideOffer(offer: any) {
     let promise = new Promise((resolve, reject) => {
-      let profiles = this.db.list('/profile', ref => ref.orderByKey().equalTo(offer.driverId));
+      let profiles = this.db.list('/Profile', ref => ref.orderByKey().equalTo(offer.driverId));
       profiles.snapshotChanges().pipe(
         map(profileChange =>
           profileChange.map(p => ({ uId: p.payload.key, ...p.payload.val() }))
@@ -151,7 +151,7 @@ export class RideViewComponent implements OnInit, OnDestroy {
       });
       return;
     }
-    let rideOffers = this.db.list('/rideOffer', ref => ref.orderByKey().equalTo(obj.uId));
+    let rideOffers = this.db.list('/RideOffer', ref => ref.orderByKey().equalTo(obj.uId));
     let requestRideOfferSubscription = rideOffers.snapshotChanges().pipe(
       map(rideOffer =>
         rideOffer.map(p => ({ uId: p.payload.key, ...p.payload.val() }))
@@ -221,7 +221,9 @@ export class RideViewComponent implements OnInit, OnDestroy {
       }
       const receivedRideForm = result.value;
       let epochMiliSecs = moment(receivedRideForm.dateTime).valueOf();
+      const pushId = this.db.createPushId();
       const newRide = {
+        uid: pushId,
         origin: receivedRideForm.origin,
         originLat: receivedRideForm.originLat,
         originLon: receivedRideForm.originLon,
@@ -234,7 +236,7 @@ export class RideViewComponent implements OnInit, OnDestroy {
         rideDescription: receivedRideForm.rideDescription,
         driverId: this.sessionUserId
       };
-      this.db.list("/rideOffer").push(newRide).then(() => {
+      this.db.list("/RideOffer").set(newRide.uid, newRide).then(() => {
           console.log("ride posted");
           this.snackBar.open("Ride Posted!", "Success", {
             duration: 2000
