@@ -26,6 +26,8 @@ import {MatInputModule} from '@angular/material/input';
 import {MatMomentDateModule} from '@angular/material-moment-adapter';
 import {MatDatepickerModule} from '@angular/material/datepicker';
 import {MatTabsModule} from '@angular/material/tabs';
+import {MatTooltipModule} from '@angular/material/tooltip';
+import {MatProgressSpinnerModule} from '@angular/material/progress-spinner';
 
 // NgDateTime imports
 import {OWL_DATE_TIME_FORMATS, OwlDateTimeModule} from 'ng-pick-datetime';
@@ -95,7 +97,7 @@ export const MY_MOMENT_FORMATS = {
     }),
     AngularFireModule.initializeApp(environment.firebase), AngularFireAuthModule, AngularFireDatabaseModule,
     MatTableModule, MatCardModule, MatToolbarModule, MatIconModule, MatSnackBarModule, MatButtonModule, MatDialogModule,
-    MatInputModule, MatMomentDateModule, MatTabsModule,
+    MatInputModule, MatMomentDateModule, MatTabsModule, MatTooltipModule, MatProgressSpinnerModule,
     MatDatepickerModule, OwlDateTimeModule, OwlMomentDateTimeModule
   ],
   providers: [

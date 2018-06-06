@@ -1,6 +1,4 @@
 import {Component, OnDestroy, OnInit} from '@angular/core';
-import {Ride} from "../ride/ride";
-import {rides} from "../ride/data";
 import {MatDialog, MatSnackBar} from "@angular/material";
 import {RideDialogComponent} from "../ride-dialog/ride-dialog.component";
 import {SessionService} from "../session.service";
@@ -21,9 +19,6 @@ const centerLon: number = -95.7129;
 })
 export class RideViewComponent implements OnInit, OnDestroy {
 
-  ridesData: Ride[] = [];
-  idState = 3;
-  columnsToDisplay = ['id', 'userName', 'start', 'end', 'date'];
   basicUserSubscription: Subscription;
   rideOfferSubscription: Subscription;
   profileSubscription: Subscription;
@@ -39,7 +34,6 @@ export class RideViewComponent implements OnInit, OnDestroy {
               private db: AngularFireDatabase) {}
 
   ngOnInit() {
-    this.ridesData = rides;
     this.basicUserSubscription = this.sessionService.basicUserInfo.subscribe(
       (data) => {
         this.sessionUserId = data.uId;

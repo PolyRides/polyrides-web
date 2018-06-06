@@ -1,5 +1,4 @@
 import { Component, OnInit } from '@angular/core';
-import {ThemePalette} from "@angular/material";
 
 @Component({
   selector: 'app-main-shell',
@@ -9,12 +8,11 @@ import {ThemePalette} from "@angular/material";
 export class MainShellComponent implements OnInit {
 
   navLinks: any[];
-  themePalette: ThemePalette;
 
   constructor() {
     this.navLinks = [
       {
-        label: 'My Ride Offers',
+        label: 'My Rides Offered',
         path: 'rides'
       },
       {
@@ -26,7 +24,6 @@ export class MainShellComponent implements OnInit {
         path: 'all'
       }
     ];
-    // this.themePalette = 'red';
   }
 
   ngOnInit() {
