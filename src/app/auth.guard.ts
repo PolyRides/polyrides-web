@@ -20,7 +20,6 @@ export class AuthGuard implements CanActivate {
         this.authenticationSubscription = this.afAuth.authState.subscribe(
           (data) => {
             if (data) {
-              console.log(data);
               this.cleanUp(true, observer);
             }
             else {
@@ -45,8 +44,8 @@ export class AuthGuard implements CanActivate {
     }
     else {
       console.log("bye");
-      this.router.navigate(['/login']);
       observer.next(false);
+      this.router.navigate(['/login']);
     }
     observer.complete();
   }

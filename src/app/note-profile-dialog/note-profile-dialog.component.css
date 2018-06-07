@@ -2,3 +2,7 @@
   font-size: 18px;
   display: block;
 }
+
+.full-width {
+  width: 100%;
+}

@@ -2,7 +2,6 @@ import { BrowserModule } from '@angular/platform-browser';
 import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
 import {ReactiveFormsModule} from '@angular/forms';
 import { NgModule } from '@angular/core';
-import {HttpClientModule} from '@angular/common/http';
 
 import {AppRoutingModule} from "./app.routing";
 
@@ -15,28 +14,53 @@ import {AngularFireAuthModule} from 'angularfire2/auth';
 import {AngularFireDatabaseModule} from "angularfire2/database";
 import {environment} from "../environments/environment";
 
+// Angular Material imports
 import {MatTableModule} from '@angular/material/table';
+import {MatCardModule} from '@angular/material/card';
 import {MatToolbarModule} from '@angular/material/toolbar';
+import {MatSnackBarModule} from '@angular/material/snack-bar';
 import {MatIconModule} from '@angular/material/icon';
 import {MatButtonModule} from '@angular/material/button';
 import {MatDialogModule} from '@angular/material/dialog';
 import {MatInputModule} from '@angular/material/input';
-import {MatNativeDateModule} from '@angular/material';
+import {MatMomentDateModule} from '@angular/material-moment-adapter';
 import {MatDatepickerModule} from '@angular/material/datepicker';
+import {MatTabsModule} from '@angular/material/tabs';
+import {MatTooltipModule} from '@angular/material/tooltip';
+import {MatProgressSpinnerModule} from '@angular/material/progress-spinner';
 
+// NgDateTime imports
+import {OWL_DATE_TIME_FORMATS, OwlDateTimeModule} from 'ng-pick-datetime';
+import {OwlMomentDateTimeModule} from 'ng-pick-datetime-moment';
+
+// Component imports
 import { AppComponent } from './app.component';
-import { TestAppService } from './test-app.service';
 import { RideDialogComponent } from './ride-dialog/ride-dialog.component';
 import { HeaderComponent } from './header/header.component';
 import { FooterComponent } from './footer/footer.component';
 import { RideViewComponent } from './ride-view/ride-view.component';
 import { HomeComponent } from './home/home.component';
-import { MainComponent } from './main/main.component';
+import { AuthShellComponent } from './auth-shell/auth-shell.component';
 import { LoginComponent } from './login/login.component';
 import { LogoutComponent } from './logout/logout.component';
 import { RequestsComponent } from './requests/requests.component';
 import { ProfileComponent } from './profile/profile.component';
+import { NoteProfileDialogComponent } from './note-profile-dialog/note-profile-dialog.component';
+import { AllRidesComponent } from './all-rides/all-rides.component';
+import { DetailRidesComponent } from './detail-rides/detail-rides.component';
+import { DetailRequestsComponent } from './detail-requests/detail-requests.component';
+import { SearchShellComponent } from './search-shell/search-shell.component';
+import { MainShellComponent } from './main-shell/main-shell.component';
 
+export const MY_MOMENT_FORMATS = {
+  parseInput: 'l LT',
+  fullPickerInput: 'l LT',
+  datePickerInput: 'l',
+  timePickerInput: 'LT',
+  monthYearLabel: 'MMM YYYY',
+  dateA11yLabel: 'LL',
+  monthYearA11yLabel: 'MMMM YYYY',
+};
 
 @NgModule({
   declarations: [
@@ -46,31 +70,38 @@ import { ProfileComponent } from './profile/profile.component';
     FooterComponent,
     RideViewComponent,
     HomeComponent,
-    MainComponent,
+    AuthShellComponent,
     LoginComponent,
     LogoutComponent,
     RequestsComponent,
-    ProfileComponent
+    ProfileComponent,
+    NoteProfileDialogComponent,
+    AllRidesComponent,
+    DetailRidesComponent,
+    DetailRequestsComponent,
+    SearchShellComponent,
+    MainShellComponent
   ],
   entryComponents: [
-    RideDialogComponent
+    RideDialogComponent,
+    NoteProfileDialogComponent
   ],
   imports: [
     BrowserModule,
     BrowserAnimationsModule,
     ReactiveFormsModule,
-    HttpClientModule,
     AppRoutingModule,
     AgmCoreModule.forRoot({
       apiKey: environment.gmapsKey,
       libraries: ["places"]
     }),
     AngularFireModule.initializeApp(environment.firebase), AngularFireAuthModule, AngularFireDatabaseModule,
-    MatTableModule, MatToolbarModule, MatIconModule, MatButtonModule, MatDialogModule, MatInputModule, MatNativeDateModule,
-    MatDatepickerModule
+    MatTableModule, MatCardModule, MatToolbarModule, MatIconModule, MatSnackBarModule, MatButtonModule, MatDialogModule,
+    MatInputModule, MatMomentDateModule, MatTabsModule, MatTooltipModule, MatProgressSpinnerModule,
+    MatDatepickerModule, OwlDateTimeModule, OwlMomentDateTimeModule
   ],
   providers: [
-    TestAppService,
+    {provide: OWL_DATE_TIME_FORMATS, useValue: MY_MOMENT_FORMATS},
   ],
   bootstrap: [AppComponent]
 })

@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { AngularFireAuth } from "angularfire2/auth";
 import { auth } from "firebase/app";
+import {BehaviorSubject} from "rxjs/internal/BehaviorSubject";
 
 @Injectable({
   providedIn: 'root'
@@ -8,7 +9,7 @@ import { auth } from "firebase/app";
 export class SessionService {
 
   authState = null;
-
+  _basicUserInfo: BehaviorSubject<basicUserInfo>;
 
   constructor(private afAuth: AngularFireAuth) {
     this.afAuth.authState.subscribe(
@@ -16,6 +17,20 @@ export class SessionService {
         this.authState = data;
       }
     );
+    this._basicUserInfo = new BehaviorSubject<basicUserInfo>({
+      uId: "",
+      firstName: "",
+      lastName: "",
+      emailAddress: ""
+    });
+  }
+
+  get basicUserInfo(): BehaviorSubject<basicUserInfo> {
+    return this._basicUserInfo;
+  }
+
+  setBasicUserInfo(metadata: basicUserInfo) {
+    this._basicUserInfo.next(metadata);
   }
 
   get authenticated(): boolean {
@@ -35,4 +50,13 @@ export class SessionService {
   logout() {
     return this.afAuth.auth.signOut();
   }
+
+
+}
+
+export interface basicUserInfo {
+  uId: string;
+  firstName: string;
+  lastName: string;
+  emailAddress: string;
 }
