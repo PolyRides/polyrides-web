@@ -157,9 +157,9 @@ export class RideViewComponent implements OnInit, OnDestroy {
           let offer: any = data[0];
           let occupiedSeats = obj.seats - 1;
           if (offer.hasOwnProperty('riderIds')) {
-            let exisitingRiderIds = offer.riderIds;
+            let existingRiderIds = offer.riderIds;
             let found = false;
-            for (let id of exisitingRiderIds) {
+            for (let id of existingRiderIds) {
               if (id === this.sessionUserId) {
                 found = true;
               }
@@ -172,7 +172,7 @@ export class RideViewComponent implements OnInit, OnDestroy {
             }
             else {
               rideOffers.update(obj.uId, {
-                riderIds: [this.sessionUserId, ...exisitingRiderIds],
+                riderIds: [this.sessionUserId, ...existingRiderIds],
                 seats: occupiedSeats
               }).then(
                 () => {
@@ -206,7 +206,9 @@ export class RideViewComponent implements OnInit, OnDestroy {
     const dialogRef = this.dialog.open(RideDialogComponent, {
       disableClose: true,
       hasBackdrop: true,
-      data: {}
+      data: {
+        isOffer: true
+      }
     });
 
     dialogRef.afterClosed().subscribe(result => {

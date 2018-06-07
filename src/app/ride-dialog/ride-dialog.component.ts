@@ -7,7 +7,8 @@ import {Subscription} from "rxjs";
 import * as moment from 'moment';
 import {Moment} from "moment";
 
-
+const offerHeader = "Offer a Ride";
+const requestHeader = "Request a Ride";
 
 @Component({
   selector: 'app-ride-dialog',
@@ -23,6 +24,8 @@ export class RideDialogComponent implements OnInit, AfterViewInit, OnDestroy {
   originSubscription: Subscription;
   destinationSubscription: Subscription;
   minDateTime: Moment;
+  isOffer: boolean;
+  headerText: string;
 
   constructor(private dialogRef: MatDialogRef<RideDialogComponent>, private fb: FormBuilder, private ngZone: NgZone,
     private mapsAPILoader: MapsAPILoader, @Inject(MAT_DIALOG_DATA) private data: any) {
@@ -41,6 +44,19 @@ export class RideDialogComponent implements OnInit, AfterViewInit, OnDestroy {
         seats: ['', Validators.required],
         rideDescription: ['']
       });
+      if (data) {
+        if (data.isOffer == true) {
+          this.isOffer = true;
+          this.headerText = offerHeader;
+        }
+        else {
+          this.isOffer = false;
+          this.headerText = requestHeader;
+          // disable inputs by putting dummy values
+          this.rideForm.get('cost').patchValue("-1");
+          this.rideForm.get('seats').patchValue("-1");
+        }
+      }
     }
 
   ngOnInit() {

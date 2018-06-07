@@ -61,7 +61,9 @@ export class DetailRidesComponent implements OnInit, OnDestroy {
     const dialogRef = this.dialog.open(RideDialogComponent, {
       disableClose: true,
       hasBackdrop: true,
-      data: {}
+      data: {
+        isOffer: true
+      }
     });
 
     dialogRef.afterClosed().subscribe(result => {

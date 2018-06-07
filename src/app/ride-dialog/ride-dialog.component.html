@@ -1,4 +1,4 @@
-<h2 mat-dialog-title>Offer a Ride</h2>
+<h2 mat-dialog-title>{{ headerText }}</h2>
 <mat-dialog-content>
   <form [formGroup]='rideForm' (ngSubmit)="onSubmit()">
     <div class="row">
@@ -25,7 +25,7 @@
       </div>
     </div>
     <br>
-    <div class="row">
+    <div class="row" *ngIf="isOffer">
       <div class="col-6">
         <mat-form-field>
           <input type="number" matInput placeholder="Seats Available" formControlName='seats'>
