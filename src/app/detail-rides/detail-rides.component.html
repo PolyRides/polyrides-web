@@ -19,7 +19,7 @@
       </ng-container>
       <ng-container matColumnDef="seats">
         <mat-header-cell *matHeaderCellDef> Seats Available</mat-header-cell>
-        <mat-cell *matCellDef="let ride"> {{ride.seats}}</mat-cell>
+        <mat-cell *matCellDef="let ride"> {{ride.seatsAvailable}}/{{ride.seats}}</mat-cell>
       </ng-container>
       <ng-container matColumnDef="cost">
         <mat-header-cell *matHeaderCellDef> Cost </mat-header-cell>

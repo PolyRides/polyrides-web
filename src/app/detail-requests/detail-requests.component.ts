@@ -35,7 +35,7 @@ export class DetailRequestsComponent implements OnInit, OnDestroy {
               console.log(offer);
               offer.forEach(
                 (obj: any) => {
-                  let displayedDeparture = moment(obj.departureDate).format('ddd MMM Do YYYY h:mm a');
+                  let displayedDeparture = moment.unix(obj.departureDate).format('ddd MMM Do YYYY h:mm a');
                   let rideOffer = {
                     uid: obj.uid,
                     origin: obj.origin,
@@ -68,7 +68,7 @@ export class DetailRequestsComponent implements OnInit, OnDestroy {
         return;
       }
       const receivedRideForm = result.value;
-      let epochMiliSecs = moment(receivedRideForm.dateTime).valueOf();
+      let epochSecs = moment(receivedRideForm.dateTime).unix();
       const pushId = this.db.createPushId();
       const newRideRequest = {
         uid: pushId,
@@ -78,7 +78,7 @@ export class DetailRequestsComponent implements OnInit, OnDestroy {
         destination: receivedRideForm.destination,
         destinationLat: receivedRideForm.destinationLat,
         destinationLon: receivedRideForm.destinationLon,
-        departureDate: epochMiliSecs,
+        departureDate: epochSecs.toString(),
         rideDescription: receivedRideForm.rideDescription,
         riderId: this.sessionUserId
       };

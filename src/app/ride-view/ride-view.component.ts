@@ -8,6 +8,7 @@ import * as moment from 'moment';
 import {map, take} from "rxjs/operators";
 import LatLngBounds = google.maps.LatLngBounds;
 import {NoteProfileDialogComponent} from "../note-profile-dialog/note-profile-dialog.component";
+import {NotifyMobileService} from "../notify-mobile.service";
 
 const centerLat: number = 37.0902;
 const centerLon: number = -95.7129;
@@ -23,6 +24,7 @@ export class RideViewComponent implements OnInit, OnDestroy {
   rideOfferSubscription: Subscription;
   profileSubscription: Subscription;
   sessionUserId: string;
+  sessionUserFullName: string;
   riderOffersDisplayed: any[] = [];
   originLat: number = centerLat;
   originLon: number = centerLon;
@@ -31,12 +33,13 @@ export class RideViewComponent implements OnInit, OnDestroy {
   mapBounds: any;
 
   constructor(private sessionService: SessionService, private dialog: MatDialog, private snackBar: MatSnackBar,
-              private db: AngularFireDatabase) {}
+              private notifyMobileService: NotifyMobileService, private db: AngularFireDatabase) {}
 
   ngOnInit() {
     this.basicUserSubscription = this.sessionService.basicUserInfo.subscribe(
       (data) => {
         this.sessionUserId = data.uId;
+        this.sessionUserFullName = data.firstName + " " + data.lastName;
       }
     );
 
@@ -82,8 +85,9 @@ export class RideViewComponent implements OnInit, OnDestroy {
         (data) => {
           if (data && data.length !== 0) {
             let userProfile: any = data[0];
-            let displayedDate = moment(offer.departureDate).format('ddd MMM Do YYYY');
-            let displayedTime = moment(offer.departureDate).format('h:mm a');
+            let displayedDate = moment.unix(offer.departureDate).format('ddd MMM Do YYYY');
+            let displayedTime = moment.unix(offer.departureDate).format('h:mm a');
+            let seatsAvailable = this.calculateSeatsAvaiable(offer);
             resolve({
               uId: offer.uId,
               profileId: userProfile.uId,
@@ -97,7 +101,7 @@ export class RideViewComponent implements OnInit, OnDestroy {
               destinationLat: offer.destinationLat,
               destinationLon: offer.destinationLon,
               cost: offer.cost,
-              seats: offer.seats,
+              seatsAvailable: seatsAvailable,
               rideDescription: offer.rideDescription
             });
           }
@@ -139,7 +143,7 @@ export class RideViewComponent implements OnInit, OnDestroy {
   }
 
   requestRide(obj) {
-    if (!obj.seats || (obj.seats && obj.seats <= 0) || (obj.profileId === this.sessionUserId)) {
+    if (!obj.seatsAvailable || (obj.seatsAvailable && obj.seatsAvailable <= 0) || (obj.profileId === this.sessionUserId)) {
       this.snackBar.open("Cannot request this ride!", "Error", {
         duration: 2000
       });
@@ -151,9 +155,12 @@ export class RideViewComponent implements OnInit, OnDestroy {
         rideOffer.map(p => ({ uId: p.payload.key, ...p.payload.val() }))
       )
     ).subscribe(
-      (data) => {
+      (data: any) => {
+        console.log("this is what an offer looks like");
         console.log(data);
         if (data && data.length !== 0) {
+          let driverId = data[0].driverId;
+          console.log("found driverId " + driverId);
           let offer: any = data[0];
           let occupiedSeats = obj.seats - 1;
           if (offer.hasOwnProperty('riderIds')) {
@@ -173,12 +180,12 @@ export class RideViewComponent implements OnInit, OnDestroy {
             else {
               rideOffers.update(obj.uId, {
                 riderIds: [this.sessionUserId, ...existingRiderIds],
-                seats: occupiedSeats
               }).then(
                 () => {
                   this.snackBar.open("Ride Requested!", "Success", {
                     duration: 2000
                   });
+                  this.processNotification(driverId, offer.uid);
                 }
               );
             }
@@ -186,7 +193,6 @@ export class RideViewComponent implements OnInit, OnDestroy {
           else {
             rideOffers.update(obj.uId, {
               riderIds: [this.sessionUserId],
-              seats: occupiedSeats
             }).then(
               () => {
                 this.snackBar.open("Ride Requested!", "Success", {
@@ -194,12 +200,51 @@ export class RideViewComponent implements OnInit, OnDestroy {
                 });
               }
             );
+            this.processNotification(driverId, offer.uid);
           }
           requestRideOfferSubscription.unsubscribe();
         }
       }
     );
 
+  }
+
+  processNotification(driverId: any, offer: string) {
+    // find driver's profile and device token
+    // put in the offerUid/requestUid
+    let profiles = this.db.list('/Profile', ref => ref.orderByKey().equalTo(driverId));
+    profiles.snapshotChanges().pipe(
+      map(profileChange =>
+        profileChange.map(p => ({ uId: p.payload.key, ...p.payload.val() }))
+      )
+    ).pipe(take(1)).subscribe(
+      (data) => {
+        if (data && data.length !== 0) {
+          let userProfile: any = data[0];
+          if (userProfile.hasOwnProperty('deviceToken')) {
+            let deviceToken = userProfile.deviceToken;
+            let notifyReq = {
+              "to": deviceToken,
+              "notification" : {
+                "body" : this.sessionUserFullName + " has become a rider on your offer!",
+                "title" : "Rider Added",
+              },
+              "data" : {
+                "offerUid" : offer
+              }
+            };
+            console.log("REQUEST IS ");
+            console.log(notifyReq);
+            this.notifyMobileService.postNotification(
+              notifyReq
+            ).subscribe((res) => {
+              console.log("recieved response from notification");
+              console.log(res);
+            });
+          }
+        }
+      }
+    );
   }
 
   openRideDialog() {
@@ -216,7 +261,7 @@ export class RideViewComponent implements OnInit, OnDestroy {
         return;
       }
       const receivedRideForm = result.value;
-      let epochMiliSecs = moment(receivedRideForm.dateTime).valueOf();
+      let epochSecs = moment(receivedRideForm.dateTime).unix();
       const pushId = this.db.createPushId();
       const newRide = {
         uid: pushId,
@@ -226,7 +271,7 @@ export class RideViewComponent implements OnInit, OnDestroy {
         destination: receivedRideForm.destination,
         destinationLat: receivedRideForm.destinationLat,
         destinationLon: receivedRideForm.destinationLon,
-        departureDate: epochMiliSecs,
+        departureDate: epochSecs.toString(),
         cost: receivedRideForm.cost,
         seats: receivedRideForm.seats,
         rideDescription: receivedRideForm.rideDescription,
@@ -240,6 +285,17 @@ export class RideViewComponent implements OnInit, OnDestroy {
         }
       );
     });
+  }
+
+  calculateSeatsAvaiable(obj): number {
+    if (obj.hasOwnProperty('riderIds')) {
+      let existingRiderIds = obj.riderIds;
+      return (obj.seats) - existingRiderIds.length;
+    }
+    else if (obj.hasOwnProperty('seats')) {
+      return (obj.seats);
+    }
+    return -1;
   }
 
   ngOnDestroy() {

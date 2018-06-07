@@ -36,12 +36,14 @@ export class DetailRidesComponent implements OnInit, OnDestroy {
               console.log(offer);
               offer.forEach(
                 (obj: any) => {
-                  let displayedDeparture = moment(obj.departureDate).format('ddd MMM Do YYYY h:mm a');
+                  let displayedDeparture = moment.unix(obj.departureDate).format('ddd MMM Do YYYY h:mm a');
+                  let seatsAvailable = this.calculateSeatsAvaiable(obj);
                   let rideOffer = {
                     uid: obj.uid,
                     origin: obj.origin,
                     destination: obj.destination,
                     departureDate: displayedDeparture,
+                    seatsAvailable: seatsAvailable,
                     seats: obj.seats,
                     cost: obj.cost
                   };
@@ -71,7 +73,7 @@ export class DetailRidesComponent implements OnInit, OnDestroy {
         return;
       }
       const receivedRideForm = result.value;
-      let epochMiliSecs = moment(receivedRideForm.dateTime).valueOf();
+      let epochSecs = moment(receivedRideForm.dateTime).unix();
       const pushId = this.db.createPushId();
       const newRide = {
         uid: pushId,
@@ -81,7 +83,7 @@ export class DetailRidesComponent implements OnInit, OnDestroy {
         destination: receivedRideForm.destination,
         destinationLat: receivedRideForm.destinationLat,
         destinationLon: receivedRideForm.destinationLon,
-        departureDate: epochMiliSecs,
+        departureDate: epochSecs.toString(),
         cost: receivedRideForm.cost,
         seats: receivedRideForm.seats,
         rideDescription: receivedRideForm.rideDescription,
@@ -95,6 +97,17 @@ export class DetailRidesComponent implements OnInit, OnDestroy {
         }
       );
     });
+  }
+
+  calculateSeatsAvaiable(obj): number {
+    if (obj.hasOwnProperty('riderIds')) {
+      let existingRiderIds = obj.riderIds;
+      return (obj.seats) - existingRiderIds.length;
+    }
+    else if (obj.hasOwnProperty('seats')) {
+      return (obj.seats);
+    }
+    return -1;
   }
 
   ngOnDestroy() {
