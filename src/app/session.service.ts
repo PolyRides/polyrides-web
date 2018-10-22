@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { AngularFireAuth } from "angularfire2/auth";
+import { AngularFireAuth } from "@angular/fire/auth";
 import { auth } from "firebase/app";
 import {BehaviorSubject} from "rxjs/internal/BehaviorSubject";
 

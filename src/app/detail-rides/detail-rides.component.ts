@@ -1,7 +1,7 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import {MatDialog, MatSnackBar} from "@angular/material";
 import {SessionService} from "../session.service";
-import {AngularFireDatabase} from "angularfire2/database";
+import {AngularFireDatabase} from "@angular/fire/database";
 import {RideDialogComponent} from "../ride-dialog/ride-dialog.component";
 import * as moment from 'moment';
 import {Subscription} from "rxjs";

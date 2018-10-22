@@ -10,9 +10,9 @@ import {AppRoutingModule} from "./app.routing";
 import {AgmCoreModule} from '@agm/core';
 
 // AngularFire imports
-import {AngularFireModule} from "angularfire2";
-import {AngularFireAuthModule} from 'angularfire2/auth';
-import {AngularFireDatabaseModule} from "angularfire2/database";
+import {AngularFireModule} from "@angular/fire";
+import {AngularFireAuthModule} from '@angular/fire/auth';
+import {AngularFireDatabaseModule} from "@angular/fire/database";
 import {environment} from "../environments/environment";
 
 // Angular Material imports

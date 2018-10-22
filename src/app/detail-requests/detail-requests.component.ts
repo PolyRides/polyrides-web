@@ -1,5 +1,5 @@
 import {Component, OnDestroy, OnInit} from '@angular/core';
-import {AngularFireDatabase} from "angularfire2/database";
+import {AngularFireDatabase} from "@angular/fire/database";
 import {MatDialog, MatSnackBar} from "@angular/material";
 import {RideDialogComponent} from "../ride-dialog/ride-dialog.component";
 import {SessionService} from "../session.service";

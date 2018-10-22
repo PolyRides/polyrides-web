@@ -2,7 +2,6 @@ import {AfterViewInit, Component, ElementRef, Inject, NgZone, OnDestroy, OnInit,
 import {FormBuilder, FormGroup, Validators} from '@angular/forms';
 import {MatDialog, MatDialogRef, MAT_DIALOG_DATA} from '@angular/material';
 import { MapsAPILoader } from '@agm/core';
-import {} from '@types/googlemaps';
 import {Subscription} from "rxjs";
 import * as moment from 'moment';
 import {Moment} from "moment";

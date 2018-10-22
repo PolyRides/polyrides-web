@@ -3,7 +3,7 @@ import {MatDialog, MatSnackBar} from "@angular/material";
 import {RideDialogComponent} from "../ride-dialog/ride-dialog.component";
 import {SessionService} from "../session.service";
 import {Subscription} from "rxjs/internal/Subscription";
-import {AngularFireDatabase} from "angularfire2/database";
+import {AngularFireDatabase} from "@angular/fire/database";
 import * as moment from 'moment';
 import {map, take} from "rxjs/operators";
 import LatLngBounds = google.maps.LatLngBounds;
