@@ -3,7 +3,7 @@ import { AngularFireAuth} from "@angular/fire/auth";
 import { AngularFireDatabase } from '@angular/fire/database';
 import { auth } from "firebase/app";
 import {SessionService} from "../session.service";
-import {Subscription} from "rxjs/index";
+import {Subscription} from "rxjs";
 import {map} from "rxjs/operators";
 
 

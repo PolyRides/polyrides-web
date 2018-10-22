@@ -3,7 +3,7 @@ import {MAT_DIALOG_DATA, MatDialogRef} from "@angular/material";
 import {AngularFireDatabase} from "@angular/fire/database";
 import {FormBuilder, FormGroup} from "@angular/forms";
 import {map} from "rxjs/operators";
-import {Subscription} from "rxjs/internal/Subscription";
+import {Subscription} from "rxjs";
 
 @Component({
   selector: 'app-note-profile-dialog',
